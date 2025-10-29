@@ -68,7 +68,3 @@ Run:
 ```bash
 pytest
 ```
-
-### Notes
-- No tutorial "steps" — this is clean, production-style code.
-- Apps are decoupled; `orders` depends on `flavours` & `toppings` via imports only.
