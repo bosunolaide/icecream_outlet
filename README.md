@@ -23,7 +23,7 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
 # Create env file
-cp .env.example .env
+.env
 
 # Run migrations and create a superuser
 python manage.py migrate
