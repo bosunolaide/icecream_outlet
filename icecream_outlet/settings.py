@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "flavours",
     "toppings",
     "orders",
+    "recommendations"
 ]
 
 MIDDLEWARE = [
