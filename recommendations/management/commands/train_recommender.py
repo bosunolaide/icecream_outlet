@@ -6,3 +6,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         train_flavour_recommender()
+        self.stdout.write(self.style.SUCCESS("✅ Model training complete."))
