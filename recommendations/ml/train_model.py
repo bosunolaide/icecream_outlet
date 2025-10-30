@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
-import joblib
+import joblib, os
 from orders.models import OrderItem
 
 def train_flavour_recommender():
@@ -20,6 +20,7 @@ def train_flavour_recommender():
     model = NearestNeighbors(metric="cosine", algorithm="brute")
     model.fit(pivot.values)
 
+    os.makedirs("ml_models", exist_ok=True)
     joblib.dump({
         "model": model,
         "flavours": list(pivot.columns),
