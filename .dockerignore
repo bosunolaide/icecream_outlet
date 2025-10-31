@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.log
+*.db
+*.sqlite3
+.env
+.venv
+venv/
+.git
+.gitignore
+ml_models/*.pkl
