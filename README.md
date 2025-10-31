@@ -1,70 +1,144 @@
-# icecream_outlet
+# 🍦 Ice Cream Outlet API  
+**Django REST Framework + Machine Learning + Docker + CI/CD**
 
-A production-ready Django REST Framework API for an **ice-cream outlet** with **separate, reusable apps**:
-- `accounts` — registration + JWT authentication (via SimpleJWT)
-- `flavours` — manage ice-cream flavours
-- `toppings` — manage toppings
-- `orders` — place orders composed of flavour items + optional toppings
+A full-featured backend system for managing an ice cream outlet — built with Django REST Framework, containerized with Docker, enhanced with a machine learning recommender engine, and production-ready with CI/CD via GitHub Actions.
 
-## Features
-- Django 5 + DRF
-- JWT auth (obtain/refresh/verify)
-- Per-app `urls.py`, serializers, viewsets
-- Reusable, decoupled apps you can plug into other projects
-- OpenAPI schema + Swagger/Redoc via `drf-spectacular`
-- Admin configured
-- Sensible permissions (read-open, write-authenticated) and pagination
+---
 
-## Quickstart
+## 🚀 Features
+
+✅ Modular architecture with reusable Django apps  
+✅ JWT authentication (DRF SimpleJWT)  
+✅ Flavours, toppings, and order management  
+✅ Machine Learning flavour recommender (KNN + collaborative filtering)  
+✅ Auto-generated API docs (Swagger & Redoc)  
+✅ PostgreSQL, Gunicorn, and Nginx for production  
+✅ Docker + docker-compose for local and production setups  
+✅ GitHub Actions CI/CD for automatic testing and deployment  
+
+---
+
+## 🧠 Machine Learning Integration
+
+The app includes a **personalized flavour recommendation engine** powered by `scikit-learn`.  
+It analyzes order data and suggests new flavours to users based on similarity patterns.
+
+### Training:
+```bash
+python manage.py seed_data
+python manage.py train_recommender
+```
+
+### Usage:
+```bash
+GET /api/recommendations/flavours/
+Authorization: Bearer <token>
+```
+
+Response example:
+```json
+[{"id": 2, "name": "Chocolate", "price": "2.75"}]
+```
+
+---
+
+## ⚙️ Tech Stack
+
+| Layer | Technology |
+|-------|-------------|
+| Backend | Django 5, Django REST Framework |
+| ML | scikit-learn, pandas, joblib |
+| Auth | JWT (SimpleJWT) |
+| DB | PostgreSQL |
+| Web Server | Gunicorn + Nginx |
+| Containerization | Docker & docker-compose |
+| CI/CD | GitHub Actions |
+| Docs | drf-spectacular (Swagger & Redoc) |
+
+---
+
+## 🧱 Local Setup
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+git clone https://github.com/<your-username>/icecream_outlet.git
+cd icecream_outlet
 pip install -r requirements.txt
-
-# Create env file
-.env
-
-# Run migrations and create a superuser
+cp .env.example .env
 python manage.py migrate
-python manage.py createsuperuser
-
-# Start dev server
 python manage.py runserver
 ```
 
-### Environment variables (`.env`)
-```
-DEBUG=true
-SECRET_KEY=change-me
-ALLOWED_HOSTS=localhost,127.0.0.1
-CORS_ALLOWED_ORIGINS=http://localhost:3000
-```
+Visit:  
+👉 [http://127.0.0.1:8000/api/schema/swagger/](http://127.0.0.1:8000/api/schema/swagger/)
 
-### API Highlights
-- Auth:
-  - `POST /api/auth/register/` — create account
-  - `POST /api/auth/jwt/create/` — obtain JWT (username & password)
-  - `POST /api/auth/jwt/refresh/`
-  - `POST /api/auth/jwt/verify/`
-  - `GET /api/auth/me/` — current user profile
+---
 
-- Catalogue:
-  - `GET/POST /api/flavours/` (list/create)
-  - `GET/PUT/PATCH/DELETE /api/flavours/{id}/`
-  - `GET/POST /api/toppings/`
-  - `GET/PUT/PATCH/DELETE /api/toppings/{id}/`
+## 🐳 Docker Setup
 
-- Orders:
-  - `GET/POST /api/orders/` — create + list user's orders
-  - `GET /api/orders/{id}/`
-
-OpenAPI:
-- Swagger UI: `/api/schema/swagger/`
-- Redoc: `/api/schema/redoc/`
-
-### Tests
-Run:
+### Development
 ```bash
-pytest
+docker compose up --build
 ```
+
+### Production
+```bash
+docker compose -f docker-compose.prod.yml up --build -d
+```
+
+---
+
+## ⚡ CI/CD with GitHub Actions
+
+- Runs tests automatically on each push to `main`
+- Builds and pushes Docker images to GHCR
+- Optionally triggers deployment to Render / Railway / VPS
+
+To deploy automatically to Render:
+1. Create a new Web Service in Render connected to your repo
+2. Copy the **Deploy Hook URL**
+3. Add it as a GitHub secret: `RENDER_DEPLOY_HOOK`
+
+---
+
+## 🌍 API Documentation
+
+| Type | URL |
+|------|-----|
+| Swagger UI | `/api/schema/swagger/` |
+| Redoc | `/api/schema/redoc/` |
+
+---
+
+## 📊 Example ERD
+
+```
+User ───< Order ───< OrderItem >─── Flavour
+                            │
+                            └───< Topping
+```
+
+---
+
+## 🧠 Future Enhancements
+
+- ✅ Real-time notifications (Django Channels)
+- ✅ Payment integration (Stripe)
+- ✅ Recommendation improvements with TensorFlow embeddings
+- ✅ Analytics dashboard (React + Chart.js)
+- ✅ Caching (Redis)
+
+---
+
+## 💼 Author
+
+👨‍💻 **Your Name**  
+📧 you@example.com  
+🌐 [linkedin.com/in/yourprofile](https://linkedin.com/in/yourprofile)
+
+> “Built with 🍦 and machine learning.”
+
+---
+
+## 🏁 License
+
+MIT License © 2025
