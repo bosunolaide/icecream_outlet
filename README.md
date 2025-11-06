@@ -131,9 +131,8 @@ User ───< Order ───< OrderItem >─── Flavour
 
 ## 💼 Author
 
-👨‍💻 **Your Name**  
-📧 you@example.com  
-🌐 [linkedin.com/in/yourprofile](https://linkedin.com/in/yourprofile)
+👨‍💻 **Abiola Olatunbosun**    
+🌐 [linkedin.com/in/abiola-olatunbosun/](https://linkedin.com/in/abiola-olatunbosun/)
 
 > “Built with 🍦 and machine learning.”
 
