@@ -13,7 +13,7 @@ A full-featured backend system for managing an ice cream outlet — built with D
 ✅ Machine Learning flavour recommender (KNN + collaborative filtering)  
 ✅ Auto-generated API docs (Swagger & Redoc)  
 ✅ PostgreSQL, Gunicorn, and Nginx for production  
-✅ MySQL and Celery for analytics/machine learning
+✅ MySQL and Celery for analytics/machine learning  
 ✅ Docker + docker-compose for local and production setups  
 ✅ GitHub Actions CI/CD for automatic testing and deployment  
 
