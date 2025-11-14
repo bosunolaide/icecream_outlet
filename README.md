@@ -13,6 +13,7 @@ A full-featured backend system for managing an ice cream outlet — built with D
 ✅ Machine Learning flavour recommender (KNN + collaborative filtering)  
 ✅ Auto-generated API docs (Swagger & Redoc)  
 ✅ PostgreSQL, Gunicorn, and Nginx for production  
+✅ MySQL and Celery for analytics/machine learning
 ✅ Docker + docker-compose for local and production setups  
 ✅ GitHub Actions CI/CD for automatic testing and deployment  
 
@@ -119,34 +120,6 @@ User ───< Order ───< OrderItem >─── Flavour
 
 ---
 
-## 🧠 Future Enhancements
-
-- ✅ Real-time notifications (Django Channels)
-- ✅ Payment integration (Stripe)
-- ✅ Recommendation improvements with TensorFlow embeddings
-- ✅ Analytics dashboard (React + Chart.js)
-- ✅ Caching (Redis)
-
----
-
-## 💼 Author
-
-👨‍💻 **Abiola Olatunbosun**    
-🌐 [linkedin.com/in/abiola-olatunbosun/](https://linkedin.com/in/abiola-olatunbosun/)
-
-> “Built with 🍦 and machine learning.”
-
----
-
-## 🏁 License
-
-MIT License © 2025
-
-
-
-
----
-
 ## Dual-Database Analytics Extension (PostgreSQL + MySQL) with Celery
 
 **Databases**
@@ -179,3 +152,27 @@ docker compose exec web python manage.py migrate --database=analytics
 ```bash
 docker compose exec web python manage.py shell -c "from analytics.tasks import sync_to_analytics; sync_to_analytics.delay()"
 ```
+---
+
+## 🧠 Future Enhancements
+
+- ✅ Real-time notifications (Django Channels)
+- ✅ Payment integration (Stripe)
+- ✅ Recommendation improvements with TensorFlow embeddings
+- ✅ Analytics dashboard (React + Chart.js)
+- ✅ Caching (Redis)
+
+---
+
+## 💼 Author
+
+👨‍💻 **Abiola Olatunbosun**    
+🌐 [linkedin.com/in/abiola-olatunbosun/](https://linkedin.com/in/abiola-olatunbosun/)
+
+> “Built with 🍦 and machine learning.”
+
+---
+
+## 🏁 License
+
+MIT License © 2025
