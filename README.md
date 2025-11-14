@@ -141,3 +141,41 @@ User ───< Order ───< OrderItem >─── Flavour
 ## 🏁 License
 
 MIT License © 2025
+
+
+
+
+---
+
+## Dual-Database Analytics Extension (PostgreSQL + MySQL) with Celery
+
+**Databases**
+- `default` = PostgreSQL (app read/write)
+- `analytics` = MySQL (analytics & ML)
+
+**How it works**
+- Multi-DB configured in `settings.py`
+- `AnalyticsRouter` routes the `analytics` app to MySQL
+- `analytics.tasks.sync_to_analytics` copies data hourly via Celery Beat
+- `analytics.tasks.train_sales_forecast` shows an example ML task reading from MySQL
+
+**Run with Docker**
+
+```bash
+# Base stack (Postgres + web + nginx)
+docker compose -f docker-compose.prod.yml up -d
+
+# Add analytics stack (MySQL + Redis + Celery worker/beat)
+docker compose -f docker-compose.prod.yml -f docker-compose.override.yml up -d
+```
+
+**Migrations**
+```bash
+docker compose exec web python manage.py migrate --database=default
+docker compose exec web python manage.py migrate --database=analytics
+```
+
+**Trigger a sync manually (optional)**
+```bash
+docker compose exec web python manage.py shell -c "from analytics.tasks import sync_to_analytics; sync_to_analytics.delay()"
+```
