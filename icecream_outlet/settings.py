@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import dj_database_url
 from datetime import timedelta
 from dotenv import load_dotenv
 
@@ -58,27 +59,58 @@ TEMPLATES = [
 ]
 WSGI_APPLICATION = "icecream_outlet.wsgi.application"
 
-DATABASES = {
-    "default": {  # Primary transactional DB (PostgreSQL)
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("POSTGRES_DB", "icecream_prod"),
-        "USER": os.getenv("POSTGRES_USER", "postgres"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
-        "HOST": os.getenv("POSTGRES_HOST", "db"),
-        "PORT": os.getenv("POSTGRES_PORT", "5432"),
-    },
-    "analytics": {  # Secondary analytics/ML DB (MySQL)
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("MYSQL_DB", "icecream_analytics"),
-        "USER": os.getenv("MYSQL_USER", "root"),
-        "PASSWORD": os.getenv("MYSQL_PASSWORD", "root"),
-        "HOST": os.getenv("MYSQL_HOST", "mysql"),
-        "PORT": os.getenv("MYSQL_PORT", "3306"),
-        "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
+# ---------------------------------------------------------------------
+# DATABASE CONFIGURATION
+# ---------------------------------------------------------------------
+
+# Default PostgreSQL DB (Render / production / primary app DB)
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    # Render injects DATABASE_URL for managed Postgres
+    DATABASES = {
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True,
+        )
+    }
+else:
+    # Local / Docker fallback (PostgreSQL)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("POSTGRES_DB", "icecream_prod"),
+            "USER": os.getenv("POSTGRES_USER", "postgres"),
+            "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
+            "HOST": os.getenv("POSTGRES_HOST", "localhost"),
+            "PORT": os.getenv("POSTGRES_PORT", "5432"),
+        }
+    }
+
+# ---------------------------------------------------------------------
+# Secondary Analytics / ML Database (MySQL)
+# ---------------------------------------------------------------------
+
+DATABASES["analytics"] = {
+    "ENGINE": "django.db.backends.mysql",
+    "NAME": os.getenv("MYSQL_DB", "icecream_analytics"),
+    "USER": os.getenv("MYSQL_USER", "root"),
+    "PASSWORD": os.getenv("MYSQL_PASSWORD", "root"),
+    "HOST": os.getenv("MYSQL_HOST", "localhost"),
+    "PORT": os.getenv("MYSQL_PORT", "3306"),
+    "OPTIONS": {
+        "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
     },
 }
 
-DATABASE_ROUTERS = ["icecream_outlet.db_routers.AnalyticsRouter"]
+# ---------------------------------------------------------------------
+# DATABASE ROUTERS
+# ---------------------------------------------------------------------
+
+DATABASE_ROUTERS = [
+    "icecream_outlet.db_routers.AnalyticsRouter",
+]
 
 # Celery configuration
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://redis:6379/0")
