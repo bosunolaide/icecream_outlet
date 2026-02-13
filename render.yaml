@@ -1,6 +1,6 @@
 databases:
   - name: icecream-postgres
-    plan: starter
+    plan: free
 
 services:
   # Django web service
