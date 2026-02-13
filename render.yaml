@@ -1,0 +1,138 @@
+services:
+  # 1) Django web service
+  - type: web
+    name: icecream-web
+    runtime: docker
+    plan: starter
+    autoDeployTrigger: commit
+    healthCheckPath: /
+    envVars:
+      # Django
+      - key: DJANGO_SETTINGS_MODULE
+        value: icecream_outlet.settings
+      - key: DEBUG
+        value: "0"
+      - key: SECRET_KEY
+        generateValue: true
+      # If your settings uses ALLOWED_HOSTS env var, set it here.
+      # Otherwise set it in Render dashboard after first deploy.
+      - key: ALLOWED_HOSTS
+        value: "*"
+
+      # Postgres (managed by Render)
+      - key: DATABASE_URL
+        fromDatabase:
+          name: icecream-postgres
+          property: connectionString
+
+      # MySQL (private service below)
+      - key: MYSQL_HOST
+        fromService:
+          name: icecream-mysql
+          type: pserv
+          property: host
+      - key: MYSQL_PORT
+        value: "3306"
+      - key: MYSQL_DB
+        value: icecream_analytics
+      - key: MYSQL_USER
+        value: root
+      - key: MYSQL_PASSWORD
+        fromService:
+          name: icecream-mysql
+          type: pserv
+          envVarKey: MYSQL_ROOT_PASSWORD
+
+      # Redis (Render Key Value)
+      - key: CELERY_BROKER_URL
+        fromService:
+          name: icecream-redis
+          type: keyvalue
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          name: icecream-redis
+          type: keyvalue
+          property: connectionString
+
+    # IMPORTANT: keep start simple; run migrations as a one-off job (script below)
+    dockerCommand: >
+      bash -lc "gunicorn icecream_outlet.wsgi:application --bind 0.0.0.0:${PORT:-8000}"
+
+  # 2) Celery worker + beat (hourly sync)
+  - type: worker
+    name: icecream-celery
+    runtime: docker
+    plan: starter
+    autoDeployTrigger: commit
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: icecream_outlet.settings
+      - key: DEBUG
+        value: "0"
+      - key: SECRET_KEY
+        fromService:
+          name: icecream-web
+          type: web
+          envVarKey: SECRET_KEY
+
+      - key: DATABASE_URL
+        fromDatabase:
+          name: icecream-postgres
+          property: connectionString
+
+      - key: MYSQL_HOST
+        fromService:
+          name: icecream-mysql
+          type: pserv
+          property: host
+      - key: MYSQL_PORT
+        value: "3306"
+      - key: MYSQL_DB
+        value: icecream_analytics
+      - key: MYSQL_USER
+        value: root
+      - key: MYSQL_PASSWORD
+        fromService:
+          name: icecream-mysql
+          type: pserv
+          envVarKey: MYSQL_ROOT_PASSWORD
+
+      - key: CELERY_BROKER_URL
+        fromService:
+          name: icecream-redis
+          type: keyvalue
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          name: icecream-redis
+          type: keyvalue
+          property: connectionString
+
+    dockerCommand: >
+      bash -lc "celery -A icecream_outlet worker -B --loglevel=info"
+
+  # 3) Redis-compatible Key Value (managed)
+  - type: keyvalue
+    name: icecream-redis
+    plan: starter
+    # Required for Key Value instances; empty list = internal-only
+    ipAllowList: []
+
+
+  # 4) MySQL as a private service (Docker-based) with a persistent disk
+  - type: pserv
+    name: icecream-mysql
+    runtime: image
+    image:
+      url: mysql:8
+    plan: starter
+    envVars:
+      - key: MYSQL_DATABASE
+        value: icecream_analytics
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
+    disk:
+      name: mysql-data
+      mountPath: /var/lib/mysql
+      sizeGB: 10
