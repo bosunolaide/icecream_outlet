@@ -26,8 +26,8 @@ INSTALLED_APPS = [
     "flavours",
     "toppings",
     "orders",
-    "recommendations"
-    'analytics',
+    "recommendations",
+    "analytics",
 ]
 
 MIDDLEWARE = [
@@ -42,6 +42,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "icecream_outlet.urls"
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -57,17 +58,16 @@ TEMPLATES = [
         },
     },
 ]
+
 WSGI_APPLICATION = "icecream_outlet.wsgi.application"
 
 # ---------------------------------------------------------------------
 # DATABASE CONFIGURATION
 # ---------------------------------------------------------------------
 
-# Default PostgreSQL DB (Render / production / primary app DB)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
-    # Render injects DATABASE_URL for managed Postgres
     DATABASES = {
         "default": dj_database_url.parse(
             DATABASE_URL,
@@ -76,7 +76,6 @@ if DATABASE_URL:
         )
     }
 else:
-    # Local / Docker fallback (PostgreSQL)
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -88,10 +87,7 @@ else:
         }
     }
 
-# ---------------------------------------------------------------------
 # Secondary Analytics / ML Database (MySQL)
-# ---------------------------------------------------------------------
-
 DATABASES["analytics"] = {
     "ENGINE": "django.db.backends.mysql",
     "NAME": os.getenv("MYSQL_DB", "icecream_analytics"),
@@ -104,10 +100,6 @@ DATABASES["analytics"] = {
     },
 }
 
-# ---------------------------------------------------------------------
-# DATABASE ROUTERS
-# ---------------------------------------------------------------------
-
 DATABASE_ROUTERS = [
     "icecream_outlet.db_routers.AnalyticsRouter",
 ]
@@ -117,13 +109,12 @@ CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://redis:6379/0")
 
 from celery.schedules import crontab
+
 CELERY_BEAT_SCHEDULE = {
     "sync_analytics_hourly": {
         "task": "analytics.tasks.sync_to_analytics",
-        "schedule": crontab(minute=0, hour="*"),  # every hour
+        "schedule": crontab(minute=0, hour="*"),
     },
-}
-
 }
 
 AUTH_PASSWORD_VALIDATORS = [
