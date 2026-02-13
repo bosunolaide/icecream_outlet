@@ -13,7 +13,10 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . .
 
 RUN mkdir -p /app/ml_models
+RUN python manage.py migrate --database=default
+RUN python manage.py migrate --database=analytics
 RUN python manage.py collectstatic --noinput || true
+RUN python manage.py createsuperuser
 
 FROM python:3.12-slim
 
