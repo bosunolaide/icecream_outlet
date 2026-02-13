@@ -123,7 +123,7 @@ services:
     name: icecream-mysql
     runtime: image
     image:
-      url: mysql:8
+      url: docker.io/library/mysql:8
     plan: starter
     envVars:
       - key: MYSQL_DATABASE
