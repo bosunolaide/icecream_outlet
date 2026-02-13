@@ -5,7 +5,7 @@ services:
     runtime: docker
     plan: starter
     autoDeployTrigger: commit
-    healthCheckPath: /
+    healthCheckPath: /health/
     envVars:
       # Django
       - key: DJANGO_SETTINGS_MODULE
