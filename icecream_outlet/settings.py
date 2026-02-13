@@ -109,6 +109,13 @@ DATABASE_ROUTERS = [
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://redis:6379/0")
 
+
+# Celery worker safety limits (help prevent OOM on small instances)
+CELERY_WORKER_MAX_TASKS_PER_CHILD = int(os.getenv("CELERY_MAX_TASKS_PER_CHILD", "50"))
+# In KB; 120000 KB ≈ 120 MB per child process
+CELERY_WORKER_MAX_MEMORY_PER_CHILD = int(os.getenv("CELERY_MAX_MEMORY_PER_CHILD", "120000"))
+CELERY_WORKER_PREFETCH_MULTIPLIER = int(os.getenv("CELERY_PREFETCH_MULTIPLIER", "1"))
+
 from celery.schedules import crontab
 
 CELERY_BEAT_SCHEDULE = {

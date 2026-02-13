@@ -1,6 +1,6 @@
 databases:
   - name: icecream-postgres
-    plan: free
+    plan: starter
 
 services:
   # Django web service
@@ -56,12 +56,12 @@ services:
           type: keyvalue
           property: connectionString
 
-    dockerCommand: >
-      bash start_web.sh
+    # Avoid bash -lc (can be parsed oddly); run directly
+    dockerCommand: bash start_web.sh
 
-  # Celery worker + beat (hourly sync)
+  # Celery worker (NO beat inside)
   - type: worker
-    name: icecream-celery
+    name: icecream-celery-worker
     runtime: docker
     plan: starter
     autoDeployTrigger: commit
@@ -108,9 +108,58 @@ services:
           name: icecream-redis
           type: keyvalue
           property: connectionString
+    dockerCommand: bash start_worker.sh
 
-    dockerCommand: >
-      bash start_worker.sh
+  # Celery beat (scheduler only)
+  - type: worker
+    name: icecream-celery-beat
+    runtime: docker
+    plan: starter
+    autoDeployTrigger: commit
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: icecream_outlet.settings
+      - key: DEBUG
+        value: "0"
+      - key: SECRET_KEY
+        fromService:
+          name: icecream-web
+          type: web
+          envVarKey: SECRET_KEY
+
+      - key: DATABASE_URL
+        fromDatabase:
+          name: icecream-postgres
+          property: connectionString
+
+      - key: MYSQL_HOST
+        fromService:
+          name: icecream-mysql
+          type: pserv
+          property: host
+      - key: MYSQL_PORT
+        value: "3306"
+      - key: MYSQL_DB
+        value: icecream_analytics
+      - key: MYSQL_USER
+        value: root
+      - key: MYSQL_PASSWORD
+        fromService:
+          name: icecream-mysql
+          type: pserv
+          envVarKey: MYSQL_ROOT_PASSWORD
+
+      - key: CELERY_BROKER_URL
+        fromService:
+          name: icecream-redis
+          type: keyvalue
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          name: icecream-redis
+          type: keyvalue
+          property: connectionString
+    dockerCommand: bash start_beat.sh
 
   # Redis Key Value
   - type: keyvalue

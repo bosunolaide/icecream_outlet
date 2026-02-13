@@ -179,3 +179,14 @@ docker compose exec web python manage.py migrate --database=analytics
 ```bash
 docker compose exec web python manage.py shell -c "from analytics.tasks import sync_to_analytics; sync_to_analytics.delay()"
 ```
+
+
+### Render deployment note (Celery stability)
+On Render, Celery **worker** and **beat** are deployed as **separate services** to reduce memory pressure:
+- `icecream-celery-worker` runs the worker (concurrency defaults to 1).
+- `icecream-celery-beat` runs the scheduler.
+You can tune these via env vars:
+- `CELERY_CONCURRENCY`
+- `CELERY_PREFETCH_MULTIPLIER`
+- `CELERY_MAX_TASKS_PER_CHILD`
+- `CELERY_MAX_MEMORY_PER_CHILD`
