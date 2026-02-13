@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
+from .views import health
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 urlpatterns = [
@@ -8,6 +9,7 @@ urlpatterns = [
     path("api/flavours/", include("flavours.urls")),
     path("api/toppings/", include("toppings.urls")),
     path("api/orders/", include("orders.urls")),
+    path("health/", health, name="health"),
 
     # OpenAPI schema and docs
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
