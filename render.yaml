@@ -57,7 +57,7 @@ services:
           property: connectionString
 
     dockerCommand: >
-      bash -lc "bash start_web.sh"
+      bash start_web.sh
 
   # Celery worker + beat (hourly sync)
   - type: worker
@@ -110,7 +110,7 @@ services:
           property: connectionString
 
     dockerCommand: >
-      bash -lc "bash start_worker.sh"
+      bash start_worker.sh
 
   # Redis Key Value
   - type: keyvalue
