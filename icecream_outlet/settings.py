@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "toppings",
     "orders",
     "recommendations"
+    'analytics',
 ]
 
 MIDDLEWARE = [
@@ -58,10 +59,39 @@ TEMPLATES = [
 WSGI_APPLICATION = "icecream_outlet.wsgi.application"
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": {  # Primary transactional DB (PostgreSQL)
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB", "icecream_prod"),
+        "USER": os.getenv("POSTGRES_USER", "postgres"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
+        "HOST": os.getenv("POSTGRES_HOST", "db"),
+        "PORT": os.getenv("POSTGRES_PORT", "5432"),
+    },
+    "analytics": {  # Secondary analytics/ML DB (MySQL)
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.getenv("MYSQL_DB", "icecream_analytics"),
+        "USER": os.getenv("MYSQL_USER", "root"),
+        "PASSWORD": os.getenv("MYSQL_PASSWORD", "root"),
+        "HOST": os.getenv("MYSQL_HOST", "mysql"),
+        "PORT": os.getenv("MYSQL_PORT", "3306"),
+        "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
+    },
+}
+
+DATABASE_ROUTERS = ["icecream_outlet.db_routers.AnalyticsRouter"]
+
+# Celery configuration
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://redis:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://redis:6379/0")
+
+from celery.schedules import crontab
+CELERY_BEAT_SCHEDULE = {
+    "sync_analytics_hourly": {
+        "task": "analytics.tasks.sync_to_analytics",
+        "schedule": crontab(minute=0, hour="*"),  # every hour
+    },
+}
+
 }
 
 AUTH_PASSWORD_VALIDATORS = [

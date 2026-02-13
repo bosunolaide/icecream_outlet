@@ -1,5 +1,8 @@
-
 class AnalyticsRouter:
+    """
+    Routes models in the 'analytics' app to the MySQL 'analytics' database.
+    Everything else goes to the default (PostgreSQL) database.
+    """
     route_app_labels = {"analytics"}
 
     def db_for_read(self, model, **hints):
