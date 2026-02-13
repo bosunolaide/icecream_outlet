@@ -4,19 +4,18 @@ set -euo pipefail
 echo "1) Validate render.yaml"
 render blueprints validate ./render.yaml
 
-echo "2) Push to GitHub (required for Blueprint deploy)"
+echo "2) Ensure scripts are executable (Linux/macOS/WSL)"
+chmod +x start_web.sh start_worker.sh || true
+
+echo "3) Push to GitHub (Render Blueprints deploy from repo)"
 git status --porcelain
-echo "If you haven't pushed yet, do: git add . && git commit -m 'Add Render blueprint' && git push"
+echo "If you have uncommitted changes: git add . && git commit -m 'Render deploy fixes' && git push"
 
-echo "3) Create the Blueprint in Render Dashboard"
-echo "In Render: New +  -> Blueprint -> select this repo -> Deploy Blueprint"
+echo "4) Deploy via Render Dashboard"
+echo "Render -> New + -> Blueprint -> select this repo -> Deploy Blueprint"
 
-echo "4) After first deploy, run migrations as a one-off job (Dashboard -> icecream-web -> Shell):"
+echo "5) After first deploy: create an admin user (optional)"
 cat <<'EOF'
-python manage.py migrate --database=default
-python manage.py migrate --database=analytics
-python manage.py collectstatic --noinput
+# In Render dashboard -> icecream-web -> Shell:
+python manage.py createsuperuser
 EOF
-
-echo "5) Optional: create admin user"
-echo "python manage.py createsuperuser"

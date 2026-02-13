@@ -1,5 +1,9 @@
+databases:
+  - name: icecream-postgres
+    plan: starter
+
 services:
-  # 1) Django web service
+  # Django web service
   - type: web
     name: icecream-web
     runtime: docker
@@ -7,15 +11,12 @@ services:
     autoDeployTrigger: commit
     healthCheckPath: /health/
     envVars:
-      # Django
       - key: DJANGO_SETTINGS_MODULE
         value: icecream_outlet.settings
       - key: DEBUG
         value: "0"
       - key: SECRET_KEY
         generateValue: true
-      # If your settings uses ALLOWED_HOSTS env var, set it here.
-      # Otherwise set it in Render dashboard after first deploy.
       - key: ALLOWED_HOSTS
         value: "*"
 
@@ -55,11 +56,10 @@ services:
           type: keyvalue
           property: connectionString
 
-    # IMPORTANT: keep start simple; run migrations as a one-off job (script below)
     dockerCommand: >
-      bash -lc "gunicorn icecream_outlet.wsgi:application --bind 0.0.0.0:${PORT:-8000}"
+      bash -lc "bash start_web.sh"
 
-  # 2) Celery worker + beat (hourly sync)
+  # Celery worker + beat (hourly sync)
   - type: worker
     name: icecream-celery
     runtime: docker
@@ -110,17 +110,15 @@ services:
           property: connectionString
 
     dockerCommand: >
-      bash -lc "celery -A icecream_outlet worker -B --loglevel=info"
+      bash -lc "bash start_worker.sh"
 
-  # 3) Redis-compatible Key Value (managed)
+  # Redis Key Value
   - type: keyvalue
     name: icecream-redis
     plan: starter
-    # Required for Key Value instances; empty list = internal-only
     ipAllowList: []
 
-
-  # 4) MySQL as a private service (Docker-based) with a persistent disk
+  # MySQL private service (Docker-based) with disk
   - type: pserv
     name: icecream-mysql
     runtime: image

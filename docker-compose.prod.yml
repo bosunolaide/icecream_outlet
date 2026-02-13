@@ -15,7 +15,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: gunicorn icecream_outlet.wsgi:application --bind 0.0.0.0:8000 --workers 4
+        command: bash -lc "bash start_web.sh"
     volumes:
       - ./ml_models:/app/ml_models
       - static_volume:/app/static

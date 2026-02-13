@@ -24,7 +24,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: celery -A icecream_outlet worker -B --loglevel=info
+        command: bash -lc "bash start_worker.sh"
     env_file:
       - .env
     depends_on:

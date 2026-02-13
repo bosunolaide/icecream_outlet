@@ -39,3 +39,5 @@ celery
 redis
 mysqlclient
 psycopg2-binary
+gunicorn
+whitenoise
