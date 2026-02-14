@@ -1,6 +1,8 @@
 import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+
 from rest_framework import status
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -20,7 +22,8 @@ class FlavourRecommendationsAPIView(APIView):
     GET  /api/recommendations/flavours/?customer_id=1&k=5
     POST /api/recommendations/flavours/ {"customer_id":1,"k":5}
     """
-
+    permission_classes = [AllowAny]
+    
     @extend_schema(
         parameters=[
             OpenApiParameter("customer_id", OpenApiTypes.INT, required=True),
