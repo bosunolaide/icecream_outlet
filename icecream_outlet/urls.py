@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import health
+from .views import health, landing
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 urlpatterns = [
+    path("", landing, name="landing"),
+
     path("admin/", admin.site.urls),
     path("api/auth/", include("accounts.urls")),
     path("api/flavours/", include("flavours.urls")),
