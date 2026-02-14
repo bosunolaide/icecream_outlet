@@ -11,6 +11,7 @@ urlpatterns = [
     path("api/flavours/", include("flavours.urls")),
     path("api/toppings/", include("toppings.urls")),
     path("api/orders/", include("orders.urls")),
+    path("api/recommendations/", include("recommendations.urls")),
     path("health/", health, name="health"),
 
     # OpenAPI schema and docs
