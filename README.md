@@ -129,24 +129,6 @@ User ───< Order ───< OrderItem >─── Flavour
 
 ---
 
-## 💼 Author
-
-👨‍💻 **Abiola Olatunbosun**    
-🌐 [linkedin.com/in/abiola-olatunbosun/](https://linkedin.com/in/abiola-olatunbosun/)
-
-> “Built with 🍦 and machine learning.”
-
----
-
-## 🏁 License
-
-MIT License © 2025
-
-
-
-
----
-
 ## Dual-Database Analytics Extension (PostgreSQL + MySQL) with Celery
 
 **Databases**
@@ -190,3 +172,18 @@ You can tune these via env vars:
 - `CELERY_PREFETCH_MULTIPLIER`
 - `CELERY_MAX_TASKS_PER_CHILD`
 - `CELERY_MAX_MEMORY_PER_CHILD`
+
+---
+
+## 💼 Author
+
+👨‍💻 **Abiola Olatunbosun**    
+🌐 [linkedin.com/in/abiola-olatunbosun/](https://linkedin.com/in/abiola-olatunbosun/)
+
+> “Built with 🍦 and machine learning.”
+
+---
+
+## 🏁 License
+
+MIT License © 2025
